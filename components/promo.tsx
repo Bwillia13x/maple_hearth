@@ -6,7 +6,7 @@ import { useRef } from "react"
 import Link from "next/link"
 
 export default function Promo() {
-  const container = useRef()
+  const container = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start end", "end start"],

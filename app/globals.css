@@ -84,6 +84,7 @@
 }
 
 @layer components {
+
   /* Typography utility classes for consistent text styling */
   .text-subtitle {
     @apply text-lg md:text-xl font-medium text-muted-foreground leading-relaxed;
@@ -130,9 +131,7 @@
 
   .btn-primary:focus {
     outline: none;
-    ring: 2px;
-    ring-color: hsl(var(--cinnamon));
-    ring-offset: 2px;
+    box-shadow: 0 0 0 2px hsl(var(--cinnamon)), 0 0 0 4px hsl(var(--cream));
   }
 
   .btn-primary:disabled {
@@ -168,9 +167,7 @@
 
   .btn-secondary:focus {
     outline: none;
-    ring: 2px;
-    ring-color: hsl(var(--butter));
-    ring-offset: 2px;
+    box-shadow: 0 0 0 2px hsl(var(--butter)), 0 0 0 4px hsl(var(--chocolate));
   }
 
   .btn-secondary:disabled {
@@ -207,9 +204,7 @@
 
   .btn-outline:focus {
     outline: none;
-    ring: 2px;
-    ring-color: hsl(var(--cinnamon));
-    ring-offset: 2px;
+    box-shadow: 0 0 0 2px hsl(var(--cinnamon)), 0 0 0 4px hsl(var(--cream));
   }
 
   .btn-outline:disabled {
@@ -244,9 +239,7 @@
 
   .btn-ghost:focus {
     outline: none;
-    ring: 2px;
-    ring-color: hsl(var(--cinnamon));
-    ring-offset: 2px;
+    box-shadow: 0 0 0 2px hsl(var(--cinnamon)), 0 0 0 4px hsl(var(--cream));
   }
 
   .btn-ghost:disabled {

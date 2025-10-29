@@ -17,6 +17,13 @@ interface FormData {
   eventDate?: string
 }
 
+interface FormErrors {
+  name?: string
+  email?: string
+  phone?: string
+  message?: string
+}
+
 export default function ContactPage() {
   const [formType, setFormType] = useState<FormType>("general")
   const [formData, setFormData] = useState<FormData>({
@@ -25,7 +32,36 @@ export default function ContactPage() {
     phone: "",
     message: "",
   })
+  const [errors, setErrors] = useState<FormErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required"
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (formData.phone && !/^[\d\s\-()]+$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid phone number"
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required"
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -33,17 +69,37 @@ export default function ContactPage() {
       ...prev,
       [name]: value,
     }))
+    // Clear error for this field when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }))
+    }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    setIsSubmitting(true)
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     // In a real app, this would send to a backend or email service
     console.log("Form submitted:", { formType, ...formData })
     setSubmitted(true)
+    setIsSubmitting(false)
+
     setTimeout(() => {
       setSubmitted(false)
       setFormData({ name: "", email: "", phone: "", message: "" })
-    }, 3000)
+      setErrors({})
+    }, 5000)
   }
 
   return (
@@ -135,11 +191,10 @@ export default function ContactPage() {
                   <button
                     key={option.value}
                     onClick={() => setFormType(option.value)}
-                    className={`p-4 min-h-[44px] rounded-lg border-2 font-medium transition-all duration-200 ease-out ${
-                      formType === option.value
+                    className={`p-4 min-h-[44px] rounded-lg border-2 font-medium transition-all duration-200 ease-out ${formType === option.value
                         ? "bg-cinnamon text-cream border-cinnamon shadow-lg"
                         : "bg-cream text-chocolate border-butter hover:border-cinnamon hover:shadow-md hover:scale-105 active:scale-95"
-                    }`}
+                      }`}
                   >
                     {option.label}
                   </button>
@@ -152,50 +207,86 @@ export default function ContactPage() {
               <div className="space-y-6">
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium text-chocolate mb-2">Name *</label>
+                  <label htmlFor="name" className="block text-sm font-medium text-chocolate mb-2">
+                    Name *
+                  </label>
                   <input
+                    id="name"
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-butter rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon"
+                    className={`w-full px-4 py-2 border rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon ${errors.name ? "border-red-500" : "border-butter"
+                      }`}
                     placeholder="Your name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
                   />
+                  {errors.name && (
+                    <p id="name-error" className="mt-1 text-sm text-red-600">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-chocolate mb-2">Email *</label>
+                  <label htmlFor="email" className="block text-sm font-medium text-chocolate mb-2">
+                    Email *
+                  </label>
                   <input
+                    id="email"
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-butter rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon"
+                    className={`w-full px-4 py-2 border rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon ${errors.email ? "border-red-500" : "border-butter"
+                      }`}
                     placeholder="your@email.com"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   />
+                  {errors.email && (
+                    <p id="email-error" className="mt-1 text-sm text-red-600">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label className="block text-sm font-medium text-chocolate mb-2">Phone</label>
+                  <label htmlFor="phone" className="block text-sm font-medium text-chocolate mb-2">
+                    Phone
+                  </label>
                   <input
+                    id="phone"
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-butter rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon"
+                    className={`w-full px-4 py-2 border rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon ${errors.phone ? "border-red-500" : "border-butter"
+                      }`}
                     placeholder="(503) 555-0000"
+                    aria-invalid={!!errors.phone}
+                    aria-describedby={errors.phone ? "phone-error" : undefined}
                   />
+                  {errors.phone && (
+                    <p id="phone-error" className="mt-1 text-sm text-red-600">
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
 
                 {/* Conditional Fields */}
                 {formType === "preorder" && (
                   <div>
-                    <label className="block text-sm font-medium text-chocolate mb-2">What are you interested in?</label>
+                    <label htmlFor="orderType" className="block text-sm font-medium text-chocolate mb-2">
+                      What are you interested in?
+                    </label>
                     <select
+                      id="orderType"
                       name="orderType"
                       value={formData.orderType || ""}
                       onChange={handleChange}
@@ -212,8 +303,11 @@ export default function ContactPage() {
 
                 {formType === "custom-cake" && (
                   <div>
-                    <label className="block text-sm font-medium text-chocolate mb-2">Event Date</label>
+                    <label htmlFor="eventDate" className="block text-sm font-medium text-chocolate mb-2">
+                      Event Date
+                    </label>
                     <input
+                      id="eventDate"
                       type="date"
                       name="eventDate"
                       value={formData.eventDate || ""}
@@ -225,21 +319,32 @@ export default function ContactPage() {
 
                 {/* Message */}
                 <div>
-                  <label className="block text-sm font-medium text-chocolate mb-2">Message *</label>
+                  <label htmlFor="message" className="block text-sm font-medium text-chocolate mb-2">
+                    Message *
+                  </label>
                   <textarea
+                    id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-2 border border-butter rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon resize-none"
+                    className={`w-full px-4 py-2 border rounded-lg text-chocolate placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cinnamon resize-none ${errors.message ? "border-red-500" : "border-butter"
+                      }`}
                     placeholder="Tell us more about your inquiry..."
+                    aria-invalid={!!errors.message}
+                    aria-describedby={errors.message ? "message-error" : undefined}
                   />
+                  {errors.message && (
+                    <p id="message-error" className="mt-1 text-sm text-red-600">
+                      {errors.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Submit Button */}
-                <button type="submit" className="w-full btn-primary">
-                  Send Message
+                <button type="submit" disabled={isSubmitting} className="w-full btn-primary disabled:opacity-50">
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </button>
 
                 {/* Success Message */}

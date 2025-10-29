@@ -106,10 +106,13 @@ export default function MenuPage() {
       <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {weeklyMenu.map((item) => (
-            <div
+            <button
               key={item.id}
-              className="bg-cream border-2 border-butter rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95"
+              type="button"
+              className="bg-cream border-2 border-butter rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 text-left w-full"
               onClick={() => toggleItem(item.id)}
+              aria-pressed={selectedItems.includes(item.id) ? "true" : "false"}
+              aria-label={`${selectedItems.includes(item.id) ? "Deselect" : "Select"} ${item.name}`}
             >
               <div className="relative h-48 w-full">
                 <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
@@ -117,12 +120,25 @@ export default function MenuPage() {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-chocolate flex-1">{item.name}</h3>
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.includes(item.id)}
-                    onChange={() => {}}
-                    className="w-6 h-6 rounded border-2 border-cinnamon accent-cinnamon cursor-pointer transition-all duration-200 hover:scale-110"
-                  />
+                  <span
+                    className={`w-6 h-6 rounded border-2 border-cinnamon flex items-center justify-center transition-all duration-200 ${selectedItems.includes(item.id) ? "bg-cinnamon" : "bg-white"
+                      }`}
+                    aria-hidden="true"
+                  >
+                    {selectedItems.includes(item.id) && (
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    )}
+                  </span>
                 </div>
                 <p className="text-caption mb-4">{item.description}</p>
                 <div className="flex justify-between items-center">
@@ -135,7 +151,7 @@ export default function MenuPage() {
                   </span>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
 
