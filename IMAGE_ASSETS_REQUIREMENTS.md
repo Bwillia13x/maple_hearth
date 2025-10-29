@@ -19,7 +19,7 @@
 
 3. **Web App Manifest** (`/public/site.webmanifest`)
 
-   ```json
+   \`\`\`json
    {
      "name": "Maple Hearth Bakery",
      "short_name": "Maple Hearth",
@@ -39,7 +39,7 @@
      "background_color": "#FFFBF5",
      "display": "standalone"
    }
-   ```
+   \`\`\`
 
 ## Priority 2: Hero & Feature Images
 

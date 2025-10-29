@@ -48,7 +48,7 @@ export default function Promo() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-chocolate mb-8 text-balance drop-shadow-md"
+            className="text-4xl md:text-5xl lg:text-6xl font-serif text-cream mb-8 text-balance drop-shadow-lg"
           >
             Celebrate your moments with a cake as unique as you are.
           </motion.h2>
@@ -58,7 +58,7 @@ export default function Promo() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Link href="/custom-cakes" className="inline-block">
-              <button className="btn-secondary">Request a Quote</button>
+              <button className="btn-primary">Request a Quote</button>
             </Link>
           </motion.div>
         </div>
